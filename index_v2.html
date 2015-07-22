@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>CMSD Aeolus Hunt Puzzle Cards</title>
+	<style>
+    .card {
+      display: block;
+      width: 267px;
+      height: 209px;
+      border-radius: 20px;
+      border: solid 1px black;
+      background-color: #fff;
+    }
+    
+    .card img {
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+    }
+    
+    #cardtray {
+      list-style: none;
+      width: 135px;
+      position: absolute;
+      left: 0;
+      margin: 10px;
+      padding: 0;
+    }
+    
+    #cardtray li {
+      margin: 0 0 10px 0;
+    }
+    
+    #cardtray .card {
+      width: 133.5px;
+      height: 104.5px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    
+    #cardlist {
+      margin-left: 155px;
+      padding: 0;
+    }
+    
+	  #cardlist li {
+      display: inline-block;
+      width: 267px;
+      height: 209px;
+      border: 3px solid #555;
+      margin: 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      vertical-align: top;
+    }
+    
+    #cardlist li.empty {
+      border-style: dashed;
+      border-color: #999;
+      background-color: #f6f6f6;
+    }
+    
+    #cardlist li.over {
+      border-color: dodgerblue;
+      background-color: aliceblue;
+    }
+    
+    #cardlist li.current {
+      border-color: orange;
+      box-shadow: 0 0 30px rgba(255, 165, 0, 0.15);
+    }
+    
+    #cardlist li .card {
+      border: 0;
+    }
+  </style>
+	<script>
+    var music;
+    var timings = [0, 2.65, 5.39, 8.03, 10.72, 13.62, 15.95, 18.76, 21.54, 24.13, 26.52];
+    
+  
+    function handleDragStart(e) {
+      //this.style.opacity = '0.4';  // this / e.target is the source node.
+      console.log('drag start');
+      
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/html', this.outerHTML);
+    }
+
+    function handleDragEnter(e) {
+      // this / e.target is the current hover target.
+      this.classList.add('over');
+    }
+    
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      
+      return false;
+    }
+
+    function handleDragLeave(e) {
+      this.classList.remove('over');  // this / e.target is previous target element.
+    }
+    
+    function handleDrop(e) {
+      e.stopPropagation();
+      
+      this.classList.remove('over');
+      this.classList.remove('empty');
+      this.innerHTML = e.dataTransfer.getData('text/html');
+      
+      this.querySelector('div.card').setAttribute('draggable', 'false');
+      
+      return false;
+    }
+    
+    window.onload = function() {
+      music = document.getElementById('music');
+      
+      var cards = document.querySelectorAll('.card');
+      Array.prototype.forEach.call(cards, function(card) {
+        card.addEventListener('dragstart', handleDragStart, false);
+      });
+      
+      var slots = document.querySelectorAll('#cardlist li');
+      Array.prototype.forEach.call(slots, function(slot, index) {
+        slot.addEventListener('dragenter', handleDragEnter, false);
+        slot.addEventListener('dragover', handleDragOver, false);
+        slot.addEventListener('dragleave', handleDragLeave, false);
+        slot.addEventListener('drop', handleDrop, false);
+        
+        slot.addEventListener('click', function(evt) {
+          music.currentTime = timings[index];
+          music.play();
+        });
+      });
+      
+      document.addEventListener('keydown', function(event) {
+        // If the delete key has been pressed
+        if(event.keyCode == 46) {
+          var selected = document.querySelector('.current');
+          
+          if(selected) {
+            selected.innerHTML = '';
+            selected.classList.add('empty');
+          }
+        }
+      });
+      
+      updateTiming();
+    }
+    
+    function updateTiming() {
+      var current = document.querySelector('li.current');
+      if(current) {
+        current.classList.remove('current');
+      }
+      
+      if(!music.paused) {
+        var index = 0;
+        
+        for(var i = 0; i < timings.length; ++i) {
+          if(music.currentTime >= timings[i]) {
+            index = i;
+          }
+        }
+        
+        document.querySelectorAll('#cardlist li')[index].classList.add('current');
+      }
+      
+      window.requestAnimationFrame(updateTiming);
+    }
+	</script>
+</head>
+<body>
+
+<center><h2>String Quartet No.1 in B flat major, Op.1 'Hunt' (opening excerpt)</h2>
+<i>Franz Joseph Haydn (1732 † 1809)</i>
+<p><audio id="music" src="huntaeolus.mp3" preload="auto" loop="loop" controls="controls"/></p>
+</center>
+
+<ul id="cardtray">
+  <li><div class="card" draggable="true" ><img draggable="false" src="img/card1.png" alt="" /></div></li>
+  <li><div class="card" draggable="true" ><img draggable="false" src="img/card2.png" alt="" /></div></li>
+  <li><div class="card" draggable="true" ><img draggable="false" src="img/card3.png" alt="" /></div></li>
+  <li><div class="card" draggable="true" ><img draggable="false" src="img/card4.png" alt="" /></div></li>
+  <li><div class="card" draggable="true" ><img draggable="false" src="img/card5.png" alt="" /></div></li>
+  <li><div class="card" draggable="true" ><img draggable="false" src="img/card6.png" alt="" /></div></li>
+  <li><div class="card" draggable="true" ><img draggable="false" src="img/card7.png" alt="" /></div></li>
+  <li><div class="card" draggable="true" ><img draggable="false" src="img/card8.png" alt="" /></div></li>
+</ul>
+
+<ul id="cardlist">
+  <li class="empty"></li>
+  <li class="empty"></li>
+  <li class="empty"></li>
+  <li class="empty"></li>
+  <li class="empty"></li>
+  <li class="empty"></li>
+  <li class="empty"></li>
+  <li class="empty"></li>
+  <li class="empty"></li>
+  <li class="empty"></li>
+  <li class="empty"></li>
+</ul>
+
+</body>
+</html>
