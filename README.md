@@ -1,4 +1,4 @@
-# CMSDPuzzleCards
+# PuzzleCards
 
 Prototype interface for Chamber Music Society of Detroit
 
